@@ -1,4 +1,4 @@
-感谢qbaty提供的[视频教程](http://www.imooc.com/learn/802213),以下是个人笔记总结
+感谢qbaty提供的[视频教程](http://www.imooc.com/learn/802213),以下是个人笔记总结(webpack2.0)
 
 ## webpack基本介绍
 1. 模块的打包器，它会把每个文件当成模块，再根据模块的依赖关系进行静态分析，然后将这些模块按照指定的规则生成对应的静态资源。
@@ -18,6 +18,59 @@
 	1. `require(style-loader!css-loader!./style.css)`,手动配置loader加载文件，切记style-loader在前面和css-loader在后面
 	2. `webpack src.js out.bundle.js --module-bind "css=style-loader!css-loader"`，通过命令行，给全部css文件指定用什么loader加载(Windows系统下用双引号)
 7. 命令行下，添加参数`--watch`，可以自动检测文件变动并重新打包，添加参数`--progress`,可以看打包的读条进度，添加参数`--display-modules`，可以把引用的所有模块都列出来。
+
+## webpack基本配置
+1. 在命令行中使用`webpack`,它默认调用当前目录下的webpack.config.js文件，若不存在会提示没找到默认配置项，通过`--help`参数查看配置选项。
+2. `webpack --config webpack.dev.config.js`，它可以设置命令行默认读取的配置文件。
+3. 若想使用webpack的其他参数，可以通过npm的脚本来做到。
+```
+	package.json
+	...,
+
+	"script": {
+		"webpack": "webpack --config webpack.config.js --progress --display-modules --colors "
+	},
+
+	...,
+```
+最后通过`npm run webpack`来运行
+4. 在webpack.config.js基本配置中：
+```
+var path = require('path');
+module.exports = {
+	entry: './src/script/main.js',
+	output: {
+		path: path.resolve(__dirname, 'dist/js'),
+		filename: 'bundle.js'
+	}
+}
+```
+它有两个必填的选项：entry和output。
+	entry(入口):
+		1. 它指定了要打包文件的路径，其值可以为字符串、字符串数组和对象。
+		2. 当值为字符串数组时，代表多个入口打包在一起(require)。
+		3. 当值为对象时，通常用于多页面应用打包出多个文件，这也是推荐使用的配置，便于扩展。 
+	output(输出):
+		1. 它有两个必要的属性path(文件路径)和filename(文件名).
+		2. path的推荐写法为：require('path')和`path:path.resolve(__dirname,'输出文件的目录路径')`
+		3. filename是输出文件的文件名，它有三种名字占位符---[name]、[hash]和[chunkhash],分别解释为入口文件的key(默认为打包的文件名)、编译器打包时的hash和每个chunk的hash(类似文件唯一标识)，文件没有变化时hash是不会变的。
+		4. 当入口为多页面应用打包时，必须为每个文件指定不同的名字(通过名字占位符)，否则会报错，提示文件被覆盖。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
