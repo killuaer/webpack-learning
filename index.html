@@ -1,9 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>webpack Learning</title>
+	<title><%= htmlWebpackPlugin.options.title %></title>
+	<!--主动引入main.js  多了个空格-->
+	<!-- <script type="text/javascript" src=" < %= htmlWebpackPlugin.files.chunks.main.entry %>"></script> -->
+
+	<!--内联引入main.js，语法检查错误但编译没有问题 -->
+	<script type="text/javascript">
+		<%= compilation.assets[htmlWebpackPlugin.files.chunks.main.entry.substr(htmlWebpackPlugin.files.publicPath.length)].source() %>
+	</script>
 </head>
 <body>
-<script type="text/javascript" src="bundle.js"></script>
+
+	 
+
+	<% for (var key in htmlWebpackPlugin) {%>
+	<%=key %> : <%= JSON.stringify(htmlWebpackPlugin[key])%>
+	<% }%>
+
+
+
+
+	<!--排除掉内联的main.js-->
+	<% for (var key in htmlWebpackPlugin.files.chunks) {%>
+		<% if (key !== 'main') {%>
+		<script type="text/javascript" src="<%= htmlWebpackPlugin.files.chunks[key].entry%>"></script>>
+		<% }%>	 
+	<% }%>
+	<!--主动引入a.js-->
+	<!-- <script type="text/javascript" src="< %= htmlWebpackPlugin.files.chunks.a.entry %>"></script> -->
 </body>
 </html>

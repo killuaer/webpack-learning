@@ -57,9 +57,21 @@ module.exports = {
 		4. 当入口为多页面应用打包时，必须为每个文件指定不同的名字(通过名字占位符)，否则会报错，提示文件被覆盖。
 
 
-
-
-
+## 自动化生成项目中的html页面
+1. `npm install html-webpack-plugin --save-dev`，安装html-webpack-plugin插件来实现自动化生成html
+2. html-webpack-plugin插件的使用：
+	1. 在webpack的plugins中初始化一个插件，它生成的html文件会自动对输出的js文件进行引用，可它和自定义的index.html之间没有任何联系
+	```
+		plugins:[
+			new htmlWebpackPlugin()
+		]
+	```
+	2. 生成的文件的保存位置是通过output中的path属性确定的，所以它应该设为公有路径
+	3. 给插件传递一个配置对象参数，template属性可以指定生成的html和哪个模板文件关联，filename属性可以定义生成的html的名字(相对路径、占位符),inject属性可以指定脚本的插入的位置(head|body|false),minify属性可以配置生成文件的压缩方式,chunks属性可以定义需要加载哪些chunk，excludeChunks属性可以定义不加载哪些chunk
+	4. 插件中自定义的属性可以传递到模板文件中，通过ejs模板语言来获取，`<%= %>`用于取值到页面， `<% %>`之间可以包含js代码
+	5. 自定义模板的主要目的是，能够加载指定的js、css文件和插入位置。其中inject属性的值要为false,阻止自动注入。
+3. output下的publicPath属性，它类似占位符，会添加到页面的资源文件路径的前面，相当于项目上线的项目地址
+4. 内联脚本到页面可以减少HTTP请求和加快页面的加载速度，这就需要用到webpack暴露出来的`compilation.asset[ chunk路径 ].source()`方法
 
 
 
